@@ -12,7 +12,6 @@ def main(podcast_feed, podcast_playlist_id):
         if item.tag == "item":
             if check_new_episodes(item, podcast_playlist_id):
                 video_dict = download_mp3(get_episode_data(item), image_show)
-                print(video_dict)
                 youtube_upload(video_dict, podcast_playlist_id)
             else:
                 print("OLD EPISODE: {}".format(item.findall("title")[0].text))

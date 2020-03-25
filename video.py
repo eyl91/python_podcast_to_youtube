@@ -67,9 +67,6 @@ def make_video(video_dict):
             output_file,
         ]
     )
-
-    print("SUCCESS: make_video - {}".format(output_file))
-
     return {
         "title": video_dict["title"],
         "description": video_dict["description"],
