@@ -28,8 +28,6 @@ def download_mp3(video_dict, args):
 
 
 def resize_image(**kwargs):
-    # kwargs = {"image_ep": "/image_path.jpg", "show_logo":"/image_path.jpg"}
-
     # Logo resize
     if "show_logo" in kwargs:
         logo_image = Image.open(kwargs["show_logo"])

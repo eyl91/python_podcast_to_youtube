@@ -1,8 +1,5 @@
 # Python Podcast to YouTube
 
-Will need `<item> <image href="url.jpg"></item>`!!!!!
-https://medium.com/@osanda.deshan/getting-google-oauth-access-token-using-google-apis-18b2ba11a11a
-
 ## Basic Overview
 This program parses podcast RSS feeds, converts audio episodes to videos, and uploads each video to a YouTube channel playlist. 
 
