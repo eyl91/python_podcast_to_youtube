@@ -9,8 +9,8 @@ This is a work in progress with some limitations, but it will work given the rig
 - Auth credentials to use YouTube API V3
 - A podcast RSS feed with this format: https://feeds.kpbs.org/cinema-junkie 
 
-# About YouTube Auth
-- Follow these steps to get credentials: https://medium.com/@osanda.deshan/getting-google-oauth-access-token-using-google-apis-18b2ba11a11a
+### About YouTube Auth
+- Follow these [steps to get credentials](https://medium.com/@osanda.deshan/getting-google-oauth-access-token-using-google-apis-18b2ba11a11a)
 - Set the following evironment variables in your `.env` file: REFRESH_TOKEN, CLIENT_ID, CLIENT_SECRET
 
 ## How to Use It
