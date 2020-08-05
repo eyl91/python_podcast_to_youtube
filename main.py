@@ -38,13 +38,6 @@ def main(args):
         )
         delete_tmp_video(video_dict["output_file"])
 
-    #         if check_new_episodes(item, podcast_playlist_id):
-    #             video_dict = download_mp3(get_episode_data(item), image_show)
-    #             youtube_upload(video_dict, podcast_playlist_id)
-    #             delete_tmp_video(video_dict["output_file"])
-    #         else:
-    #             print("OLD EPISODE: {}".format(item.findall("title")[0].text))
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

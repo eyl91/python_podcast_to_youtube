@@ -71,24 +71,6 @@ def youtube_upload(**kwargs):
     # print(kwargs)
     youtube = youtube_auth()
     video_dict = kwargs["video_dict"]
-    print(
-        {
-            "snippet": {
-                "categoryId": kwargs["category"],
-                "description": f"{video_dict['description']}",
-                "tags": kwargs["tags"],
-                "title": video_dict["title"],
-            },
-            "status": {
-                "privacyStatus": "private"
-                if kwargs["private"]
-                else "unlisted"
-                if kwargs["unlisted"]
-                else "public"
-            },
-        }
-    )
-
     insert_request = youtube.videos().insert(
         part="snippet,status",
         body={
@@ -112,7 +94,8 @@ def youtube_upload(**kwargs):
     )
 
     video_id = resumable_upload(insert_request)
-    # playlist_update(youtube, podcast_playlist_id, video_id)
+    if kwargs["playlist_id"]:
+        playlist_update(youtube, kwargs["playlist_id"], video_id)
 
 
 def resumable_upload(insert_request):
