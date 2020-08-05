@@ -1,39 +1,54 @@
+import os
 import requests
 import subprocess
 import tempfile
 from PIL import Image
 
 
-def download_mp3(video_dict, image_show):
-    image_show_req = requests.get(image_show)
-    audio_req = requests.get(video_dict["audio_file"])
-    image_req = requests.get(video_dict["image_file"])
+def download_mp3(video_dict, args):
+
+    audio_ep_req = requests.get(video_dict["audio_file"])
+    image_ep_req = requests.get(video_dict["image_file"])
 
     with tempfile.NamedTemporaryFile(
         suffix=".mp3"
-    ) as audio, tempfile.NamedTemporaryFile(
-        suffix=".jpg"
-    ) as image, tempfile.NamedTemporaryFile(
-        suffix=".jpg"
-    ) as image_show:
-        audio.write(audio_req.content)
-        image.write(image_req.content)
-        image_show.write(image_show_req.content)
-        resize_image(image.name, image_show.name)
-        video_dict.update({"audio_file": audio.name, "image_file": image.name})
+    ) as audio_ep, tempfile.NamedTemporaryFile(suffix=".jpg") as image_ep:
+        audio_ep.write(audio_ep_req.content)
+        image_ep.write(image_ep_req.content)
+        if args.logo:
+            image_show_req = requests.get(video_dict["show_logo"])
+            with tempfile.NamedTemporaryFile(suffix="jpg") as image_show:
+                image_show.write(image_show_req.content)
+                resize_image(image_ep=image_ep.name, show_logo=image_show.name)
+        else:
+            resize_image(image_ep=image_ep.name)
+
+        video_dict.update({"audio_file": audio_ep.name, "image_file": image_ep.name})
         return make_video(video_dict)
 
 
-def resize_image(image, image_show):
-    image_bg = Image.open(image).convert("RGBA")
-    image_fg = Image.open(image_show).resize((200, 200)).convert("RGBA")
-    image_bg.paste(image_fg, (25, 25), image_fg)
+def resize_image(**kwargs):
+    # kwargs = {"image_ep": "/image_path.jpg", "show_logo":"/image_path.jpg"}
 
+    # Logo resize
+    if "show_logo" in kwargs:
+        logo_image = Image.open(kwargs["show_logo"])
+        logo_maxsize = (150, 150)
+        logo_image.thumbnail(logo_maxsize, Image.LANCZOS)
+        logo_image = logo_image.convert("RGBA")
+
+    # Main image resize
+    image_bg = Image.open(kwargs["image_ep"])
     image_width = 700
-    wpercent = image_width / float(image_bg.size[0])
-    hsize = int((float(image_bg.size[1]) * float(wpercent)))
-    final_image = image_bg.resize((image_width, hsize), Image.BICUBIC)
-    final_image.convert("RGB").save(image)
+    wpercent = image_width / image_bg.size[0]
+    hsize = int((image_bg.size[1] * wpercent))
+    final_image = image_bg.resize((image_width, hsize), Image.LANCZOS)
+    # add logo if it exists
+    if "show_logo" in kwargs:
+        final_image = final_image.convert("RGBA")
+        final_image.paste(logo_image, (25, 25), logo_image)
+        final_image = final_image.convert("RGB")
+    final_image.save(kwargs["image_ep"])
 
 
 def make_video(video_dict):
@@ -70,6 +85,9 @@ def make_video(video_dict):
     return {
         "title": video_dict["title"],
         "description": video_dict["description"],
-        "story_link": video_dict["story_link"],
         "output_file": output_file,
     }
+
+
+def delete_tmp_video(output_file):
+    os.remove(output_file)
