@@ -21,9 +21,17 @@ def main(args):
                         break
 
         if item.tag == "item":
-            episodes.append(item)
-    if args.latest:
+            if args.specific_episode:
+                title = item.find("title").text
+                for selected_title in args.specific_episode:
+                    if selected_title.lower() == title.lower().strip():
+                        episodes.append(item)
+            else:
+                episodes.append(item)
+
+    if args.latest and not args.specific_episode:
         episodes = episodes[: (args.latest)]
+
     for episode_item in episodes:
         video_dict = download_mp3(
             get_episode_data(episode_item=episode_item, show_logo=show_logo), args,
@@ -52,11 +60,19 @@ if __name__ == "__main__":
         type=int,
     )
     parser.add_argument(
-        "-nc",
-        "--no_old_episodes_check",
-        help="Confirm upload of existing video on YouTube.",
-        action="store_true",
+        "-sep",
+        "--specific_episode",
+        nargs="+",
+        type=str,
+        help="Pass specific episode title(s) to be uploaded to YouTube",
     )
+
+    # parser.add_argument(
+    #     "-nc",
+    #     "--no_old_episodes_check",
+    #     help="Confirm upload of existing video on YouTube.",
+    #     action="store_true",
+    # )
     parser.add_argument(
         "-lo",
         "--logo",
