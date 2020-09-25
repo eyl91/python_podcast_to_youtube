@@ -31,13 +31,13 @@ def resize_image(**kwargs):
     # Logo resize
     if "show_logo" in kwargs:
         logo_image = Image.open(kwargs["show_logo"])
-        logo_maxsize = (150, 150)
+        logo_maxsize = (300, 300)
         logo_image.thumbnail(logo_maxsize, Image.LANCZOS)
         logo_image = logo_image.convert("RGBA")
 
     # Main image resize
     image_bg = Image.open(kwargs["image_ep"])
-    image_width = 700
+    image_width = 1280
     wpercent = image_width / image_bg.size[0]
     hsize = int((image_bg.size[1] * wpercent))
     final_image = image_bg.resize((image_width, hsize), Image.LANCZOS)

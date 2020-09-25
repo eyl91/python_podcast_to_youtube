@@ -34,7 +34,6 @@ def check_new_episodes(item, podcast_playlist_id):
 
 
 def get_episode_data(**kwargs):
-
     episode_data = {}
     for element in kwargs["episode_item"]:
         episode_data[
@@ -47,7 +46,6 @@ def get_episode_data(**kwargs):
             if element.text
             else element.attrib
         )
-
     # TODO: Handle KeyError for feeds that dont have episode images.
     title = (
         episode_data["title"]
@@ -59,7 +57,9 @@ def get_episode_data(**kwargs):
         title=title,
         description=episode_data["description"],
         audio_file=episode_data["enclosure"]["url"],
-        image_file=episode_data["image"]["href"],
+        image_file=episode_data["image"]["href"]
+        if "href" in episode_data["image"]
+        else episode_data["image"],
         show_logo=kwargs["show_logo"],
     )
 
