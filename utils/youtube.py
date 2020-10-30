@@ -3,8 +3,8 @@ import httplib2
 import os
 import random
 import time
-
 import settings
+import sys
 
 # Google
 from google.auth.exceptions import RefreshError
@@ -147,13 +147,13 @@ def playlist_update(youtube, podcast_playlist_id, video_id):
     print("SUCCESS: playlist_update")
 
 
-def identify_missing_episodes(podcast_playlist_id):
-    youtube = youtube_auth()
-    request = youtube.playlistItems().list(
-        part="snippet,contentDetails", maxResults=25, playlistId=podcast_playlist_id
-    )
-    response = request.execute()
-    video_titles_list = []
-    for video in response["items"]:
-        video_titles_list.append(video["snippet"]["title"])
-    return video_titles_list
+# def identify_missing_episodes(podcast_playlist_id):
+#     youtube = youtube_auth()
+#     request = youtube.playlistItems().list(
+#         part="snippet,contentDetails", maxResults=25, playlistId=podcast_playlist_id
+#     )
+#     response = request.execute()
+#     video_titles_list = []
+#     for video in response["items"]:
+#         video_titles_list.append(video["snippet"]["title"])
+#     return video_titles_list

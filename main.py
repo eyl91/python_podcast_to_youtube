@@ -1,7 +1,7 @@
 import argparse
-from parser import get_episode_data, parse_feed, check_new_episodes
-from video import download_mp3, delete_tmp_video
-from youtube import youtube_upload
+from utils.parser import get_episode_data, parse_feed
+from utils.video import make_ep_image, make_default_ep_image, delete_tmp_video
+from utils.youtube import youtube_upload
 
 
 def main(args):
@@ -29,12 +29,19 @@ def main(args):
             else:
                 episodes.append(item)
 
-    if args.latest and not args.specific_episode:
+    if args.latest:
         episodes = episodes[: (args.latest)]
 
     for episode_item in episodes:
-        video_dict = download_mp3(
-            get_episode_data(episode_item=episode_item, show_logo=show_logo), args,
+        video_dict = (
+            make_ep_image(
+                get_episode_data(episode_item=episode_item, show_logo=show_logo), args,
+            )
+            if not args.default_image
+            else make_default_ep_image(
+                get_episode_data(episode_item=episode_item, show_logo=show_logo),
+                args.default_image,
+            )
         )
         youtube_upload(
             video_dict=video_dict,
@@ -51,7 +58,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "podcast_feed",
-        help="Arg should be the link to the feed (i.e., https://feeds.kpbs.org/cinema-junkie) or a local xml file",
+        help="Arg should be a link to the feed (i.e., https://feeds.kpbs.org/cinema-junkie) or path to an xml file",
     )
     parser.add_argument(
         "-la",
@@ -80,6 +87,17 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
+        "-d",
+        "--default_image",
+        help="Set path for default image to be used for episodes.",
+    )
+    parser.add_argument(
+        "-ot",
+        "--overlay_text_episode_info",
+        help="Text with episode information (Show Title, Episode Title, Publication Date) to be overlayed on the image",
+        action="store_true",
+    )
+    parser.add_argument(
         "-p",
         "--youtube_private",
         help="Add if the podcast epsiodes uploaded to YouTube should be set to private",
@@ -105,9 +123,21 @@ if __name__ == "__main__":
     parser.add_argument(
         "-t",
         "--youtube_tags",
-        help="Add tags to your podcast episode videos.",
+        help="Add tags to your podcast episode videos.(i.e. 'news, arts, culture')",
         default=[],
     )
 
     args = parser.parse_args()
+    if not args.default_image and args.overlay_text_episode_info:
+        parser.error(
+            "--overlay_text_episode_info can only be set when --default_image is set."
+        )
+    if args.default_image and args.logo:
+        parser.error("--logo can only be set when --default_image is NOT set.")
+    if args.latest and args.specific_episode:
+        parser.error("--latest can only be set when --specific_episode is NOT set.")
+    if args.youtube_private and args.youtube_unlisted:
+        parser.error(
+            "--youtube_private can only be set when --youtube_unlisted is NOT set."
+        )
     main(args)

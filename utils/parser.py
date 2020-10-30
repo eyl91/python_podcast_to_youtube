@@ -2,7 +2,8 @@ import requests
 import tempfile
 import os
 import xml.etree.ElementTree as ET
-from youtube import identify_missing_episodes
+
+# from utils.youtube import identify_missing_episodes
 
 
 class FeedDoesNotHaveEpisodeImages(Exception):
@@ -25,12 +26,12 @@ def parse_feed(feed):
     return channel
 
 
-def check_new_episodes(item, podcast_playlist_id):
-    old_episodes_list = identify_missing_episodes(podcast_playlist_id)
-    if item.findall("title")[0].text not in old_episodes_list:
-        print("NEW EPISODE: {}".format(item.findall("title")[0].text))
-        print("SUCCESS: check_new_episodes")
-        return True
+# def check_new_episodes(item, podcast_playlist_id):
+#     old_episodes_list = identify_missing_episodes(podcast_playlist_id)
+#     if item.findall("title")[0].text not in old_episodes_list:
+#         print("NEW EPISODE: {}".format(item.findall("title")[0].text))
+#         print("SUCCESS: check_new_episodes")
+#         return True
 
 
 def get_episode_data(**kwargs):
@@ -46,7 +47,7 @@ def get_episode_data(**kwargs):
             if element.text
             else element.attrib
         )
-    # TODO: Handle KeyError for feeds that dont have episode images.
+    # TODO: Handle KeyError for feeds that don't have episode images.
     title = (
         episode_data["title"]
         if len(episode_data["title"]) < 70
@@ -55,7 +56,9 @@ def get_episode_data(**kwargs):
 
     video_dict = dict(
         title=title,
+        full_title=episode_data["title"],
         description=episode_data["description"],
+        pubdate=episode_data["pubDate"],
         audio_file=episode_data["enclosure"]["url"],
         image_file=episode_data["image"]["href"]
         if "href" in episode_data["image"]

@@ -1,11 +1,14 @@
+import datetime
 import os
 import requests
 import subprocess
+from shutil import copyfile
 import tempfile
-from PIL import Image
+
+from PIL import Image, ImageDraw, ImageFont
 
 
-def download_mp3(video_dict, args):
+def make_ep_image(video_dict, args):
 
     audio_ep_req = requests.get(video_dict["audio_file"])
     image_ep_req = requests.get(video_dict["image_file"])
@@ -25,6 +28,49 @@ def download_mp3(video_dict, args):
 
         video_dict.update({"audio_file": audio_ep.name, "image_file": image_ep.name})
         return make_video(video_dict)
+
+
+def make_default_ep_image(video_dict, default_image):
+    audio_ep_req = requests.get(video_dict["audio_file"])
+    with tempfile.NamedTemporaryFile(
+        suffix=".mp3"
+    ) as audio_ep, tempfile.NamedTemporaryFile(suffix=".jpg") as image_ep:
+        audio_ep.write(audio_ep_req.content)
+        with open(default_image) as img_file:
+            copyfile(img_file.name, image_ep.name)
+            add_info_text(video_dict, image_ep.name)
+
+            video_dict.update(
+                {"audio_file": audio_ep.name, "image_file": image_ep.name}
+            )
+
+            return make_video(video_dict)
+
+
+def add_info_text(video_dict, image_ep_path):
+    print(video_dict)
+    # Main image resize
+    image_bg = Image.open(image_ep_path)
+    image_width = 1280
+    wpercent = image_width / image_bg.size[0]
+    hsize = int((image_bg.size[1] * wpercent))
+    main_image = image_bg.resize((image_width, hsize), Image.LANCZOS)
+
+    pubdate_datetime = datetime.datetime.strptime(
+        video_dict["pubdate"], "%a, %d %b %Y %H:%M:%S %z"
+    )
+
+    # Add text
+    # Add default font ImageFont.load_default()
+    img = ImageDraw.Draw(main_image)
+    font_title = ImageFont.truetype("../resources/Montserrat/Montserrat-Black.ttf", 45)
+    font_date = ImageFont.truetype("../resources/Montserrat/Montserrat-Light.ttf", 30)
+    img.text((650, 325), video_dict["full_title"], font=font_title, fill="black")
+    img.text(
+        (650, 375), pubdate_datetime.strftime("%B %d, %Y"), font=font_date, fill="black"
+    )
+    # main_image.show()
+    main_image.save(image_ep_path)
 
 
 def resize_image(**kwargs):
@@ -47,6 +93,16 @@ def resize_image(**kwargs):
         final_image.paste(logo_image, (25, 25), logo_image)
         final_image = final_image.convert("RGB")
     final_image.save(kwargs["image_ep"])
+
+
+# def text_wrap(title):
+#     words = map(lambda i: {"word": i, "len":len(i)}, len(title))
+#     lines = {}
+#     counter = 0
+#     for word in words:
+#         counter += 1
+#         if counter < 45:
+#             lines[]
 
 
 def make_video(video_dict):

@@ -26,15 +26,16 @@ CLIENT_SECRET=
 ### Options
 ```
 usage: main.py [-h] [-la LATEST]
-               [-sep SPECIFIC_EPISODE [SPECIFIC_EPISODE ...]] [-lo] [-p] [-u]
+               [-sep SPECIFIC_EPISODE [SPECIFIC_EPISODE ...]] [-lo]
+               [-d DEFAULT_IMAGE] [-ot] [-p] [-u]
                [-pid PODCAST_YOUTUBE_PLAYLIST_ID] [-cid YOUTUBE_CATEGORY_ID]
                [-t YOUTUBE_TAGS]
                podcast_feed
 
 positional arguments:
-  podcast_feed          Arg should be the link to the feed (i.e.,
-                        https://feeds.kpbs.org/cinema-junkie) or a local xml
-                        file
+  podcast_feed          Arg should be a link to the feed (i.e.,
+                        https://feeds.kpbs.org/cinema-junkie) or path to an
+                        xml file
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -47,6 +48,11 @@ optional arguments:
                         YouTube
   -lo, --logo           Add if the podcast logo should be added over the
                         episode image.
+  -d DEFAULT_IMAGE, --default_image DEFAULT_IMAGE
+                        Set path for default image to be used for episodes.
+  -ot, --overlay_text_episode_info
+                        Text with episode information (Show Title, Episode
+                        Title, Publication Date) to be overlayed on the image
   -p, --youtube_private
                         Add if the podcast epsiodes uploaded to YouTube should
                         be set to private
@@ -63,7 +69,8 @@ optional arguments:
                         categories here: https://developers.google.com/youtube
                         /v3/docs/videoCategories/list
   -t YOUTUBE_TAGS, --youtube_tags YOUTUBE_TAGS
-                        Add tags to your podcast episode videos.
+                        Add tags to your podcast episode videos.(i.e. 'news,
+                        arts, culture')
 ```
 
 ## More Details
