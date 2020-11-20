@@ -1,11 +1,20 @@
 import argparse
+import json
 from utils.parser import get_episode_data, parse_feed
 from utils.video import make_ep_image, make_default_ep_image, delete_tmp_video
 from utils.youtube import youtube_upload
 
 
 def main(args):
-    print(args)
+    # with open("p2ytconfig.json") as config_file:
+    #     data = json.load(config_file)
+    #     title_font = data["title_font"]
+    #     subtitle_font = data["subtitle_font"]
+    #     print(title_font, subtitle_font)
+    process_feed(args)
+
+
+def process_feed(args):
     feed = parse_feed(args.podcast_feed)
     episodes = []
     show_logo = ""
@@ -97,6 +106,12 @@ if __name__ == "__main__":
         help="Text with episode information (Show Title, Episode Title, Publication Date) to be overlayed on the image",
         action="store_true",
     )
+    # parser.add_argument(
+    #     "-f",
+    #     "--font",
+    #     help="Font file path to be passed to PIL.ImageFont.truetype",
+    #     action="store_true",
+    # )
     parser.add_argument(
         "-p",
         "--youtube_private",
