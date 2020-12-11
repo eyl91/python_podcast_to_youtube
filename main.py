@@ -18,6 +18,7 @@ def process_feed(args):
     feed = parse_feed(args.podcast_feed)
     episodes = []
     show_logo = ""
+    output_files = []
 
     for item in feed:
         if args.logo and "image" in item.tag:
@@ -52,15 +53,20 @@ def process_feed(args):
                 args.default_image,
             )
         )
-        youtube_upload(
-            video_dict=video_dict,
-            playlist_id=args.podcast_youtube_playlist_id,
-            category=args.youtube_category_id,
-            tags=args.youtube_tags,
-            private=args.youtube_private,
-            unlisted=args.youtube_unlisted,
-        )
-        delete_tmp_video(video_dict["output_file"])
+        if args.local_file:
+            output_files.append(video_dict["output_file"])
+        else:
+            youtube_upload(
+                video_dict=video_dict,
+                playlist_id=args.podcast_youtube_playlist_id,
+                category=args.youtube_category_id,
+                tags=args.youtube_tags,
+                private=args.youtube_private,
+                unlisted=args.youtube_unlisted,
+            )
+            delete_tmp_video(video_dict["output_file"])
+
+        print(output_files)
 
 
 if __name__ == "__main__":
@@ -112,6 +118,12 @@ if __name__ == "__main__":
     #     help="Font file path to be passed to PIL.ImageFont.truetype",
     #     action="store_true",
     # )
+    parser.add_argument(
+        "-lf",
+        "--local_file",
+        help="Videos won't be uploaded to YouTube; Output will be /outuput.",
+        action="store_true",
+    )
     parser.add_argument(
         "-p",
         "--youtube_private",

@@ -65,9 +65,17 @@ def add_info_text(video_dict, image_ep_path):
     img = ImageDraw.Draw(main_image)
     font_title = ImageFont.truetype("../resources/Montserrat/Montserrat-Black.ttf", 45)
     font_date = ImageFont.truetype("../resources/Montserrat/Montserrat-Light.ttf", 30)
-    img.text((650, 325), video_dict["full_title"], font=font_title, fill="black")
+    # Adding title with character limit per line
+    starting_height = 325
+    for line in parsed_title(video_dict["full_title"]):
+        img.text((610, starting_height), line, font=font_title, fill="black")
+        starting_height = starting_height + 50
+    # Adding date under title
     img.text(
-        (650, 375), pubdate_datetime.strftime("%B %d, %Y"), font=font_date, fill="black"
+        (610, (starting_height + 25)),
+        pubdate_datetime.strftime("%B %d, %Y"),
+        font=font_date,
+        fill="black",
     )
     # main_image.show()
     main_image.save(image_ep_path)
@@ -95,14 +103,31 @@ def resize_image(**kwargs):
     final_image.save(kwargs["image_ep"])
 
 
-# def text_wrap(title):
-#     words = map(lambda i: {"word": i, "len":len(i)}, len(title))
-#     lines = {}
-#     counter = 0
-#     for word in words:
-#         counter += 1
-#         if counter < 45:
-#             lines[]
+def parsed_title(title):
+    # charLimit specific for this font & size
+    charLimit = 24
+    title_list = [(t, len(t)) for t in title.split(" ")]
+    lines = []
+    line = ""
+    counter = 0
+    for t in title_list:
+        if (counter + t[1]) <= charLimit:
+            counter = counter + t[1]
+            line = ((line + " ") + t[0]).strip()
+            if title_list.index(t) == (len(title_list) - 1):
+                # Save completed line
+                lines.append(line)
+                # Reset line + counter
+                counter = 0
+                line = ""
+        else:
+            # Save completed line
+            lines.append(line)
+            # Start next line
+            counter = t[1]
+            line = (t[0]).strip()
+
+    return lines
 
 
 def make_video(video_dict):
