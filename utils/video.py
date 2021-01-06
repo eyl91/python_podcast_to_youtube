@@ -105,7 +105,7 @@ def resize_image(**kwargs):
 
 def parsed_title(title):
     # charLimit specific for this font & size
-    charLimit = 24
+    charLimit = 22
     title_list = [(t, len(t)) for t in title.split(" ")]
     lines = []
     line = ""
@@ -115,7 +115,7 @@ def parsed_title(title):
             counter = counter + t[1]
             line = ((line + " ") + t[0]).strip()
             if title_list.index(t) == (len(title_list) - 1):
-                # Save completed line
+                # Save completed line if it's the last word
                 lines.append(line)
                 # Reset line + counter
                 counter = 0
@@ -126,6 +126,12 @@ def parsed_title(title):
             # Start next line
             counter = t[1]
             line = (t[0]).strip()
+            if title_list.index(t) == (len(title_list) - 1):
+                # Save completed line if it's the last word
+                lines.append(line)
+                # Reset line + counter
+                counter = 0
+                line = ""
 
     return lines
 
