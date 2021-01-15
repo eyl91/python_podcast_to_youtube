@@ -46,6 +46,7 @@ def main(args):
         )
         if args.local_file:
             output_files.append(video_dict["output_file"])
+            print("Local file: ", output_files)
         else:
             youtube_upload(
                 video_dict=video_dict,
@@ -57,8 +58,6 @@ def main(args):
             )
             delete_tmp_video(video_dict["output_file"])
 
-        print(output_files)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -67,30 +66,10 @@ if __name__ == "__main__":
         help="Arg should be a link to the feed (i.e., https://feeds.kpbs.org/cinema-junkie) or path to an xml file",
     )
     parser.add_argument(
-        "-la",
-        "--latest",
-        help="Specify how many of the latest episodes (top being the latest) should be uploaded to YouTube. Otherwise it will parse all episodes.",
-        type=int,
-    )
-    parser.add_argument(
-        "-sep",
-        "--specific_episode",
-        nargs="+",
-        type=str,
-        help="Pass specific episode title(s) to be uploaded to YouTube",
-    )
-
-    # parser.add_argument(
-    #     "-nc",
-    #     "--no_old_episodes_check",
-    #     help="Confirm upload of existing video on YouTube.",
-    #     action="store_true",
-    # )
-    parser.add_argument(
-        "-lo",
-        "--logo",
-        help="Add if the podcast logo should be added over the episode image.",
-        action="store_true",
+        "-cid",
+        "--youtube_category_id",
+        help="Select the category id that should be assigned to your podcast episode videos. Find list of available categories here: https://developers.google.com/youtube/v3/docs/videoCategories/list",
+        default="22",
     )
     parser.add_argument(
         "-d",
@@ -98,15 +77,33 @@ if __name__ == "__main__":
         help="Set path for default image to be used for episodes.",
     )
     parser.add_argument(
-        "-ot",
-        "--overlay_text_episode_info",
-        help="Text with episode information (Show Title, Episode Title, Publication Date) to be overlayed on the image",
-        action="store_true",
+        "-la",
+        "--latest",
+        help="Specify how many of the latest episodes (top being the latest) should be uploaded to YouTube. Otherwise it will parse all episodes.",
+        type=int,
     )
     parser.add_argument(
         "-lf",
         "--local_file",
-        help="Videos won't be uploaded to YouTube; Output will be /outuput.",
+        help="Videos won't be uploaded to YouTube. It will be saved locally.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-lo",
+        "--logo",
+        help="Add if the podcast logo should be added over the episode image.",
+        action="store_true",
+    )
+    # parser.add_argument(
+    #     "-nc",
+    #     "--no_old_episodes_check",
+    #     help="Confirm upload of existing video on YouTube.",
+    #     action="store_true",
+    # )
+    parser.add_argument(
+        "-ot",
+        "--overlay_text_episode_info",
+        help="Text with episode information (Show Title, Episode Title, Publication Date) to be overlayed on the image",
         action="store_true",
     )
     parser.add_argument(
@@ -116,27 +113,28 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
-        "-u",
-        "--youtube_unlisted",
-        help="Add if the podcast epsiodes uploaded to YouTube should be set to unlisted",
-        action="store_true",
-    )
-    parser.add_argument(
         "-pid",
         "--podcast_youtube_playlist_id",
         help="Arg should be the YouTube playlist ID this video will be set to, it's also necessary to check what episodes in the feed have already been uploaded to YouTube",
     )
     parser.add_argument(
-        "-cid",
-        "--youtube_category_id",
-        help="Select the category id that should be assigned to your podcast episode videos. Find list of available categories here: https://developers.google.com/youtube/v3/docs/videoCategories/list",
-        default="22",
+        "-sep",
+        "--specific_episode",
+        nargs="+",
+        type=str,
+        help="Pass specific episode title(s) to be uploaded to YouTube",
     )
     parser.add_argument(
         "-t",
         "--youtube_tags",
         help="Add tags to your podcast episode videos.(i.e. 'news, arts, culture')",
         default=[],
+    )
+    parser.add_argument(
+        "-u",
+        "--youtube_unlisted",
+        help="Add if the podcast epsiodes uploaded to YouTube should be set to unlisted",
+        action="store_true",
     )
 
     args = parser.parse_args()
