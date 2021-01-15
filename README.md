@@ -2,9 +2,7 @@
 This is a work in progress with some limitations, but it will work given the right RSS feed structure. 
 
 ## Basic Overview
-This program parses podcast RSS feeds, converts audio episodes to videos, and uploads each video to a YouTube channel.
-This is a work in progress with some limitations, but it will work given the right RSS feed structure. 
-
+This program parses podcast RSS feeds, converts audio episodes to videos, and can upload each video to a YouTube channel. 
 ## What You Need
 - Auth credentials to use YouTube API V3
 - A podcast RSS feed with this format: https://feeds.kpbs.org/cinema-junkie 
@@ -27,7 +25,7 @@ CLIENT_SECRET=
 ```
 usage: main.py [-h] [-la LATEST]
                [-sep SPECIFIC_EPISODE [SPECIFIC_EPISODE ...]] [-lo]
-               [-d DEFAULT_IMAGE] [-ot] [-p] [-u]
+               [-d DEFAULT_IMAGE] [-ot] [-lf] [-p] [-u]
                [-pid PODCAST_YOUTUBE_PLAYLIST_ID] [-cid YOUTUBE_CATEGORY_ID]
                [-t YOUTUBE_TAGS]
                podcast_feed
@@ -53,6 +51,7 @@ optional arguments:
   -ot, --overlay_text_episode_info
                         Text with episode information (Show Title, Episode
                         Title, Publication Date) to be overlayed on the image
+  -lf, --local_file     Videos won't be uploaded to YouTube. It will be saved locally.
   -p, --youtube_private
                         Add if the podcast epsiodes uploaded to YouTube should
                         be set to private
@@ -70,7 +69,7 @@ optional arguments:
                         /v3/docs/videoCategories/list
   -t YOUTUBE_TAGS, --youtube_tags YOUTUBE_TAGS
                         Add tags to your podcast episode videos.(i.e. 'news,
-                        arts, culture')
+                        arts, culture')             
 ```
 
 ## More Details

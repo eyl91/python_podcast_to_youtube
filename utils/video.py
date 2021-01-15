@@ -38,6 +38,7 @@ def make_default_ep_image(video_dict, default_image):
         audio_ep.write(audio_ep_req.content)
         with open(default_image) as img_file:
             copyfile(img_file.name, image_ep.name)
+            # TODO: Should I check for -ot here? if there's default image with text already in it. it should not be overlayed.
             add_info_text(video_dict, image_ep.name)
 
             video_dict.update(
