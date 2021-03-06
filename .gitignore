@@ -4,6 +4,7 @@ __pycache__/
 .pytest_cache/
 .vscode/
 venv/
-resources/Montserrat/
+lmvenv/
+resources/fonts/*
 samples/
 client_secrets.json

@@ -1,20 +1,11 @@
 import argparse
 import json
 from utils.parser import get_episode_data, parse_feed
-from utils.video import make_ep_image, make_default_ep_image, delete_tmp_video
+import utils.video
 from utils.youtube import youtube_upload
 
 
 def main(args):
-    # with open("p2ytconfig.json") as config_file:
-    #     data = json.load(config_file)
-    #     title_font = data["title_font"]
-    #     subtitle_font = data["subtitle_font"]
-    #     print(title_font, subtitle_font)
-    process_feed(args)
-
-
-def process_feed(args):
     feed = parse_feed(args.podcast_feed)
     episodes = []
     show_logo = ""
@@ -43,16 +34,15 @@ def process_feed(args):
         episodes = episodes[: (args.latest)]
 
     for episode_item in episodes:
-        video_dict = (
-            make_ep_image(
-                get_episode_data(episode_item=episode_item, show_logo=show_logo), args,
-            )
-            if not args.default_image
-            else make_default_ep_image(
-                get_episode_data(episode_item=episode_item, show_logo=show_logo),
-                args.default_image,
-            )
+        ep_video = utils.video.Video(
+            get_episode_data(episode_item=episode_item, show_logo=show_logo), args
         )
+        video_dict = (
+            ep_video.make_ep_image()
+            if not args.default_image
+            else ep_video.make_default_ep_image()
+        )
+        # Stopped here!!!
         if args.local_file:
             output_files.append(video_dict["output_file"])
             print("Local file: ", output_files)
@@ -103,24 +93,12 @@ if __name__ == "__main__":
         help="Add if the podcast logo should be added over the episode image.",
         action="store_true",
     )
-    # parser.add_argument(
-    #     "-nc",
-    #     "--no_old_episodes_check",
-    #     help="Confirm upload of existing video on YouTube.",
-    #     action="store_true",
-    # )
     parser.add_argument(
         "-ot",
         "--overlay_text_episode_info",
         help="Text with episode information (Show Title, Episode Title, Publication Date) to be overlayed on the image",
         action="store_true",
     )
-    # parser.add_argument(
-    #     "-f",
-    #     "--font",
-    #     help="Font file path to be passed to PIL.ImageFont.truetype",
-    #     action="store_true",
-    # )
     parser.add_argument(
         "-p",
         "--youtube_private",

@@ -6,6 +6,8 @@ This program parses podcast RSS feeds, converts audio episodes to videos, and ca
 ## What You Need
 - Auth credentials to use YouTube API V3
 - A podcast RSS feed with this format: https://feeds.kpbs.org/cinema-junkie 
+- For text overlays a `title.ttf` and a `subtitle.ttf` will need to be added to `./resources/fonts`
+![Podcast default image example including a title and a date](./assets/sample_podcast_image.png)
 
 ### About YouTube API V3
 - Follow these [steps to get credentials](https://medium.com/@osanda.deshan/getting-google-oauth-access-token-using-google-apis-18b2ba11a11a)
