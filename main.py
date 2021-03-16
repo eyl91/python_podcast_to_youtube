@@ -42,7 +42,6 @@ def main(args):
             if not args.default_image
             else ep_video.make_default_ep_image()
         )
-        # Stopped here!!!
         if args.local_file:
             output_files.append(video_dict["output_file"])
             print("Local file: ", output_files)
@@ -55,7 +54,7 @@ def main(args):
                 private=args.youtube_private,
                 unlisted=args.youtube_unlisted,
             )
-            delete_tmp_video(video_dict["output_file"])
+            ep_video.delete_tmp_video()
 
 
 if __name__ == "__main__":
@@ -96,7 +95,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-ot",
         "--overlay_text_episode_info",
-        help="Text with episode information (Show Title, Episode Title, Publication Date) to be overlayed on the image",
+        help="Text with episode information (Episode Title, Publication Date) to be overlayed on the image",
         action="store_true",
     )
     parser.add_argument(

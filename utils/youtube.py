@@ -78,7 +78,7 @@ def youtube_upload(**kwargs):
                 "categoryId": kwargs["category"],
                 "description": f"{video_dict['description']}",
                 "tags": kwargs["tags"],
-                "title": video_dict["title"],
+                "title": video_dict["title"], #TODO: Add name of podcast here? i.e. Port of Entry Podcast: <title>
             },
             "status": {
                 "privacyStatus": "private"
@@ -138,7 +138,7 @@ def playlist_update(youtube, podcast_playlist_id, video_id):
         body={
             "snippet": {
                 "playlistId": podcast_playlist_id,
-                "position": 0,
+                # "position": 0,  TODO: If the playlist uses auto sorting, this won't work. Remove this? Account for auto sorting?
                 "resourceId": {"kind": "youtube#video", "videoId": video_id},
             }
         },

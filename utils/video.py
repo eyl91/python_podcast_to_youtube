@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 class Video:
-    def __init__(video_dict, params):  # Constructor
+    def __init__(self, video_dict, params):  # Constructor
         self.video_dict = video_dict
         self.params = params
 
@@ -27,14 +27,14 @@ class Video:
                 image_show_req = requests.get(self.video_dict["show_logo"])
                 with tempfile.NamedTemporaryFile(suffix="jpg") as image_show:
                     image_show.write(image_show_req.content)
-                    resize_image(image_ep=image_ep.name, show_logo=image_show.name)
+                    self.resize_image(image_ep=image_ep.name, show_logo=image_show.name)
             else:
-                resize_image(image_ep=image_ep.name)
+                self.resize_image(image_ep=image_ep.name)
 
             self.video_dict.update(
                 {"audio_file": audio_ep.name, "image_file": image_ep.name}
             )
-            return make_video(video_dict)
+            return self.make_video()
 
     def make_default_ep_image(self):
         audio_ep_req = requests.get(self.video_dict["audio_file"])
@@ -46,16 +46,16 @@ class Video:
                 copyfile(img_file.name, image_ep.name)
                 # TODO: Should I check for -ot here? if there's default image with text already in it. it should not be overlayed.
 
-                add_info_text(self.video_dict, image_ep.name)
+                self.add_info_text(image_ep.name)
 
                 self.video_dict.update(
                     {"audio_file": audio_ep.name, "image_file": image_ep.name}
                 )
 
-                return make_video(self.video_dict)
+                return self.make_video()
 
-    def add_info_text(self, video_dict, image_ep_path):
-        print(video_dict)
+    def add_info_text(self, image_ep_path):
+        print(self.video_dict)
         # Main image resize
         image_bg = Image.open(image_ep_path)
         image_width = 1280
@@ -64,17 +64,17 @@ class Video:
         main_image = image_bg.resize((image_width, hsize), Image.LANCZOS)
 
         pubdate_datetime = datetime.datetime.strptime(
-            video_dict["pubdate"], "%a, %d %b %Y %H:%M:%S %z"
+            self.video_dict["pubdate"], "%a, %d %b %Y %H:%M:%S %z"
         )
 
         # Add text
         # Add default font ImageFont.load_default()
         img = ImageDraw.Draw(main_image)
-        font_title = ImageFont.truetype("../resources/fonts/title.ttf", 45)
-        font_date = ImageFont.truetype("../resources/fonts/subtitle.ttf", 30)
+        font_title = ImageFont.truetype("./resources/fonts/title.ttf", 45)
+        font_date = ImageFont.truetype("./resources/fonts/subtitle.ttf", 30)
         # Adding title with character limit per line
         starting_height = 325
-        for line in parsed_title(video_dict["full_title"]):
+        for line in self.parsed_title():
             img.text((610, starting_height), line, font=font_title, fill="black")
             starting_height = starting_height + 50
         # Adding date under title
@@ -108,7 +108,8 @@ class Video:
             final_image = final_image.convert("RGB")
         final_image.save(kwargs["image_ep"])
 
-    def parsed_title(self, title):
+    def parsed_title(self):
+        title = self.video_dict["full_title"]
         # charLimit specific for this font & size
         charLimit = 20
         title_list = [(t, len(t)) for t in title.split(" ")]
@@ -140,8 +141,8 @@ class Video:
 
         return lines
 
-    def make_video(self, video_dict):
-        output_file = "/tmp/{}.mkv".format("_".join(video_dict["title"].split()))
+    def make_video(self):
+        output_file = "/tmp/{}.mkv".format("_".join(self.video_dict["title"].split()))
         subprocess.run(
             [
                 "ffmpeg",
@@ -150,9 +151,9 @@ class Video:
                 "-framerate",
                 "2",
                 "-i",
-                video_dict["image_file"],
+                self.video_dict["image_file"],
                 "-i",
-                video_dict["audio_file"],
+                self.video_dict["audio_file"],
                 "-c:v",
                 "libx264",
                 "-preset",
@@ -171,11 +172,13 @@ class Video:
                 output_file,
             ]
         )
+
+        self.video_dict.update({"output_file": output_file})
         return {
-            "title": video_dict["title"],
-            "description": video_dict["description"],
+            "title": self.video_dict["title"],
+            "description": self.video_dict["description"],
             "output_file": output_file,
         }
 
-    def delete_tmp_video(self, output_file):
-        os.remove(output_file)
+    def delete_tmp_video(self):
+        os.remove(self.video_dict["output_file"])
