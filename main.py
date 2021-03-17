@@ -2,7 +2,7 @@ import argparse
 import json
 import utils.parser
 import utils.video
-from utils.youtube import youtube_upload
+import utils.youtube
 
 
 def main(args):
@@ -48,7 +48,7 @@ def main(args):
             output_files.append(video_dict["output_file"])
             print("Local file: ", output_files)
         else:
-            youtube_upload(
+            yt = utils.youtube.YouTube(
                 video_dict=video_dict,
                 playlist_id=args.podcast_youtube_playlist_id,
                 category=args.youtube_category_id,
@@ -56,6 +56,7 @@ def main(args):
                 private=args.youtube_private,
                 unlisted=args.youtube_unlisted,
             )
+            yt.youtube_upload()
             ep_video.delete_tmp_video()
 
 
