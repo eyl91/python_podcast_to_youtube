@@ -1,12 +1,13 @@
 import argparse
 import json
-from utils.parser import get_episode_data, parse_feed
+import utils.parser
 import utils.video
 from utils.youtube import youtube_upload
 
 
 def main(args):
-    feed = parse_feed(args.podcast_feed)
+    parser = utils.parser.Parser(args)
+    feed = parser.parse_feed()
     episodes = []
     show_logo = ""
     output_files = []
@@ -35,7 +36,8 @@ def main(args):
 
     for episode_item in episodes:
         ep_video = utils.video.Video(
-            get_episode_data(episode_item=episode_item, show_logo=show_logo), args
+            parser.get_episode_data(episode_item=episode_item, show_logo=show_logo),
+            args,
         )
         video_dict = (
             ep_video.make_ep_image()
