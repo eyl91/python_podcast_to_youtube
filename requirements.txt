@@ -3,6 +3,6 @@ google-api-python-client==1.7.11
 google-auth==1.11.2
 google-auth-httplib2==0.0.3
 google-auth-oauthlib==0.4.1
-Pillow==7.2.0
+Pillow==8.1.1
 python-dotenv==0.15.0
 pytest==6.1.0
